@@ -210,7 +210,7 @@ struct FixDiagnostic {
 };
 
 //! fix frequency diagnostic updater
-FixDiagnostic freq_diag;
+FixDiagnostic* freq_diag = nullptr;
 
 /**
  * @brief Determine dynamic model from human-readable string.
@@ -834,7 +834,9 @@ class UbloxFirmware7Plus : public UbloxFirmware {
     // Update diagnostics
     //
     last_nav_pvt_ = m;
-    freq_diag.diagnostic->tick(fix.header.stamp);
+    if (freq_diag != nullptr) {
+      freq_diag->diagnostic->tick(fix_.header.stamp);
+    }
     updater->update();
   }
 

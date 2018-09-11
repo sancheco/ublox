@@ -736,7 +736,9 @@ void UbloxFirmware6::callbackNavPosLlh(const ublox_msgs::NavPOSLLH& m) {
   fixPublisher.publish(fix_);
   last_nav_pos_ = m;
   //  update diagnostics
-  freq_diag.diagnostic->tick(fix_.header.stamp);
+  if (freq_diag != nullptr) {
+      freq_diag->diagnostic->tick(fix_.header.stamp);
+  }
   updater->update();
 }
 
