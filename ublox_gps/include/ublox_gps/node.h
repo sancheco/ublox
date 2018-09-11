@@ -89,7 +89,7 @@ constexpr static uint16_t kDefaultMeasPeriod = 250;
 //! Default subscribe Rate to u-blox messages [Hz]
 constexpr static uint32_t kSubscribeRate = 1;
 //! Subscribe Rate for u-blox SV Info messages
-constexpr static uint32_t kNavSvInfoSubscribeRate = 20;
+constexpr static uint32_t kNavSvInfoSubscribeRate = 1;
 
 // ROS objects
 //! ROS diagnostic updater
