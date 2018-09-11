@@ -362,18 +362,38 @@ void UbloxNode::processMonVer() {
       break;
     }
   }
-  if (protocol_version_ == 0)
-    ROS_WARN("Failed to parse MonVER and determine protocol version. %s",
-             "Defaulting to firmware version 6.");
-  addFirmwareInterface();
-
   if(protocol_version_ < 18) {
     // Final line contains supported GNSS delimited by ;
-    std::vector<std::string> strs;
-    if(extension.size() > 0)
-      boost::split(strs, extension[extension.size()-1], boost::is_any_of(";"));
-    for(size_t i = 0; i < strs.size(); i++)
-      supported.insert(strs[i]);
+
+    std::set<std::string> available_versions;
+    available_versions.insert("HPG");
+    available_versions.insert("SPG");
+    available_versions.insert("ADR");
+    available_versions.insert("UDR");
+    available_versions.insert("TIM");
+    available_versions.insert("FTS");
+
+    for(std::size_t i = 0; i < extension.size(); ++i) {
+      std::vector<std::string> strs;
+      if(i <= extension.size() - 2) {
+        boost::split(strs, extension[i], boost::is_any_of(" "));
+        if(strs.size() > 1) {
+          if (available_versions.find(strs[0]) != available_versions.end()) {
+            if(strs[1].length() > 4)
+              addProductInterface(strs[0].substr(0, 3), strs[1].substr(4,7));
+            else
+              addProductInterface(strs[0].substr(0, 3));
+            continue;
+          }
+        }
+      }
+      // Last 1-2 lines contain supported GNSS
+      if(i >= extension.size() - 2){
+        boost::split(strs, extension[extension.size()-1], boost::is_any_of(";"));
+        for(size_t i = 0; i < strs.size(); i++)
+          supported.insert(strs[i]);
+      }
+    }
   } else {
     for(std::size_t i = 0; i < extension.size(); ++i) {
       std::vector<std::string> strs;
