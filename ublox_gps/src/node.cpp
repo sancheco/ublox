@@ -328,7 +328,7 @@ void UbloxNode::initializeRosDiagnostics() {
   updater->setHardwareID("ublox");
 
   // configure diagnostic updater for frequency
-  freq_diag = FixDiagnostic(std::string("fix"), kFixFreqTol,
+  freq_diag = new FixDiagnostic(std::string("fix"), kFixFreqTol,
                             kFixFreqWindow, kTimeStampStatusMin);
   for(int i = 0; i < components_.size(); i++)
     components_[i]->initializeRosDiagnostics();
@@ -362,6 +362,13 @@ void UbloxNode::processMonVer() {
       break;
     }
   }
+
+  if (protocol_version_ == 0)
+    ROS_WARN("Failed to parse MonVER and determine protocol version. %s",
+             "Defaulting to firmware version 6.");
+  addFirmwareInterface();
+
+
   if(protocol_version_ < 18) {
     // Final line contains supported GNSS delimited by ;
 
@@ -403,7 +410,7 @@ void UbloxNode::processMonVer() {
         if(strs.size() > 1) {
           if (strs[0].compare(std::string("FWVER")) == 0) {
             if(strs[1].length() > 8)
-              addProductInterface(strs[1].substr(0, 3), strs[1].substr(8, 10));
+              addProductInterface(strs[1].substr(0, 3), strs[1].substr(8, 11));
             else
               addProductInterface(strs[1].substr(0, 3));
             continue;
