@@ -772,8 +772,16 @@ class UbloxFirmware7Plus : public UbloxFirmware {
     if (((m.valid & valid_time) == valid_time) &&
         (m.flags2 & m.FLAGS2_CONFIRMED_AVAILABLE)) {
       // Use NavPVT timestamp since it is valid
-      fix.header.stamp.sec = toUtcSeconds(m);
-      fix.header.stamp.nsec = m.nano;
+      // timestamp
+      sensor_msgs::NavSatFix fix;
+      if(m.nano>0){
+          fix.header.stamp.sec = toUtcSeconds(m);
+          fix.header.stamp.nsec = m.nano;
+      }else {
+          fix.header.stamp.sec = toUtcSeconds(m)-1;
+          fix.header.stamp.nsec = 1000000000+m.nano;
+      }
+
     } else {
       // Use ROS time since NavPVT timestamp is not valid
       fix.header.stamp = ros::Time::now();
