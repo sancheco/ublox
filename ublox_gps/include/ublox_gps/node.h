@@ -773,7 +773,6 @@ class UbloxFirmware7Plus : public UbloxFirmware {
 
       // Use NavPVT timestamp since it is valid
       // timestamp
-      sensor_msgs::NavSatFix fix;
       if(m.nano>0){
           fix.header.stamp.sec = toUtcSeconds(m);
           fix.header.stamp.nsec = m.nano;
@@ -786,6 +785,7 @@ class UbloxFirmware7Plus : public UbloxFirmware {
       // Use ROS time since NavPVT timestamp is not valid
       fix.header.stamp = ros::Time::now();
     }
+
     // Set the LLA
     fix.latitude = m.lat * 1e-7; // to deg
     fix.longitude = m.lon * 1e-7; // to deg
