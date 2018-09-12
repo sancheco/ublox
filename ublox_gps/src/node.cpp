@@ -1729,11 +1729,12 @@ void TimProduct::subscribe() {
   ROS_INFO("TIM-TM2 is Enabled: %u", enabled["tim_tm2"]);
   // Subscribe to TIM-TM2 messages (Time mark messages)
   nh->param("publish/tim/tm2", enabled["tim_tm2"], enabled["tim"]);
-
-  gps.subscribe<ublox_msgs::TimTM2>(boost::bind(
-    &TimProduct::callbackTimTM2, this, _1), kSubscribeRate);
+  if (enabled["tim_tm2"]){
+    gps.subscribe<ublox_msgs::TimTM2>(boost::bind(
+      &TimProduct::callbackTimTM2, this, _1), kSubscribeRate);
 	
-  ROS_INFO("Subscribed to TIM-TM2 messages on topic tim/tm2");
+    ROS_INFO("Subscribed to TIM-TM2 messages on topic tim/tm2");
+  }
 	
   // Subscribe to SFRBX messages
   nh->param("publish/rxm/sfrb", enabled["rxm_sfrb"], enabled["rxm"]);
