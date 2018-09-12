@@ -769,9 +769,8 @@ class UbloxFirmware7Plus : public UbloxFirmware {
     fix.header.frame_id = frame_id;
     // set the timestamp
     uint8_t valid_time = m.VALID_DATE | m.VALID_TIME | m.VALID_FULLY_RESOLVED;
-    
-    if (((m.valid & valid_time) == valid_time) &&(protocol_version_<19 ||
-        (m.flags2 & m.FLAGS2_CONFIRMED_AVAILABLE))) {
+    if ((m.valid & valid_time) == valid_time) {
+
       // Use NavPVT timestamp since it is valid
       // timestamp
       sensor_msgs::NavSatFix fix;
@@ -844,7 +843,7 @@ class UbloxFirmware7Plus : public UbloxFirmware {
     //
     last_nav_pvt_ = m;
     if (freq_diag != nullptr) {
-      freq_diag->diagnostic->tick(fix_.header.stamp);
+      freq_diag->diagnostic->tick(fix.header.stamp);
     }
     updater->update();
   }
