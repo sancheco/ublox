@@ -773,8 +773,13 @@ class UbloxFirmware7Plus : public UbloxFirmware {
 
       // Use NavPVT timestamp since it is valid
       // timestamp
-      fix.header.stamp.sec = toUtcSeconds(m);
-      fix.header.stamp.nsec = m.nano;
+      if(m.nano>0){
+          fix.header.stamp.sec = toUtcSeconds(m);
+          fix.header.stamp.nsec = m.nano;
+      }else {
+          fix.header.stamp.sec = toUtcSeconds(m)-1;
+          fix.header.stamp.nsec = 1000000000+m.nano;
+      }
 
     } else {
       // Use ROS time since NavPVT timestamp is not valid
